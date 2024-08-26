@@ -1,8 +1,28 @@
+const express = require("express");
+const cors = require("cors");
+const app = express();
+
+// Use CORS middleware
+app.use(cors());
+
+// Define your routes
+app.get("http://127.0.0.1:5500/index.html", (req, res) => {
+  res.json({ message: "CORS is enabled for this route" });
+});
+
+// Start the server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
+
 const form = document.getElementById("form");
 
 const search = document.getElementById("search");
 
 const results = document.getElementById("results");
+
+const more = document.getElementById("more");
 
 let URL = `https://api.lyrics.ovh`;
 
@@ -43,8 +63,9 @@ function showInDom(data) {
 
   results.innerHTML = `<ul class='songs'>
   ${data.data
-    .map((item) => 
-      `<li>
+    .map(
+      (item) =>
+        `<li>
         
         <span><strong>${item.artist.name}</strong> - ${item.title}</span>
     <button class="btn" data-artist="${item.artist.name}" data-title="${item.title}"> Get Lyrics </button>
@@ -54,6 +75,32 @@ function showInDom(data) {
     .join("")};
   
   </ul>`;
+
+  if (data.next || data.prev) {
+    // console.log("ismein hai agke pichle ka lafda");
+
+    more.innerHTML = `
+     ${
+       data.next
+         ? `<button class="btn" onClick="getMoreSongs('${data.next}')">Next</button>`
+         : ""
+     }
+     ${
+       data.prev
+         ? ` <button class="btn" onClick="getMoreSongs('${data.prev}')">Prev</button>`
+         : ""
+     }
+     `;
+  } else {
+    more.innerHTML = ``;
+  }
+}
+
+async function getMoreSongs(url) {
+  const proxyUrl = "https://cors-anywhere.herokuapp.com/"; // You can use other CORS proxies as well
+  const res = await fetch(proxyUrl + url);
+  const data = await res.json();
+  console.log(data);
 }
 
 form.addEventListener("submit", submitValue);
