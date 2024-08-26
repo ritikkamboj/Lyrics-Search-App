@@ -73,8 +73,12 @@ form button {
   position: absolute;
 }
 
-.btn {
+#more .btn{
   display: none;
+}
+
+.btn {
+ 
   background-color: #8d56fd;
   border: 0;
   border-radius: 10px;
