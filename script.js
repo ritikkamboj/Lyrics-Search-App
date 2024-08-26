@@ -1,21 +1,3 @@
-const express = require("express");
-const cors = require("cors");
-const app = express();
-
-// Use CORS middleware
-app.use(cors());
-
-// Define your routes
-app.get("http://127.0.0.1:5500/index.html", (req, res) => {
-  res.json({ message: "CORS is enabled for this route" });
-});
-
-// Start the server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
-
 const form = document.getElementById("form");
 
 const search = document.getElementById("search");
@@ -97,10 +79,43 @@ function showInDom(data) {
 }
 
 async function getMoreSongs(url) {
-  const proxyUrl = "https://cors-anywhere.herokuapp.com/"; // You can use other CORS proxies as well
-  const res = await fetch(proxyUrl + url);
+  const res = await fetch(`https://cors-anywhere.herokuapp.com/${url}`);
   const data = await res.json();
   console.log(data);
 }
 
 form.addEventListener("submit", submitValue);
+
+async function getLyrics(artist, songTitle) {
+  console.log("jai maata di");
+
+  const res = await fetch(`${URL}/v1/${artist}/${songTitle}`);
+
+  const data = await res.json();
+  console.log(data);
+
+  const data1 = data.lyrics.replace(/(\r\n|\r|\n)/g, "<br/>");
+  console.log(data1);
+
+  results.innerHTML = `<h2> <strong>${artist}</strong>  -  <span>${songTitle}</span></h2>
+    <p>
+    ${data1}
+    
+    </p>
+    `;
+
+    more.innerHTML=``
+}
+
+results.addEventListener("click", (e) => {
+  const clickedEl = e.target;
+  console.log(clickedEl);
+
+  if (clickedEl.tagName === "BUTTON") {
+    console.log("button clicked");
+    const artist = clickedEl.getAttribute("data-artist");
+    const songTitle = clickedEl.getAttribute("data-title");
+
+    getLyrics(artist, songTitle);
+  }
+});
